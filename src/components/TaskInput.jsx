@@ -2,15 +2,20 @@ import React from 'react';
 
 export default function TaskInput({ newTaskText, onNewTaskTextChange, handleAddTask }) {
   return (
-    <form onSubmit={handleAddTask} className="mb-4">
+    <form onSubmit={handleAddTask} className="w-full max-w-md mb-4">
       <input
         type="text"
         value={newTaskText}
         onChange={onNewTaskTextChange}
-        onKeyDown={(e) => e.key === 'Enter' && handleAddTask(e)}
-        className="box-border bg-white text-black p-2 rounded"
-        autoFocus
+        className="w-full p-2 border rounded mb-2"
+        placeholder="Enter new task"
       />
+      <button
+        type="submit"
+        className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded"
+      >
+        Submit
+      </button>
     </form>
   );
 }

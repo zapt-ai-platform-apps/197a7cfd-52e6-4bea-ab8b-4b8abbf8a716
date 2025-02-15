@@ -7,6 +7,7 @@ export default function App() {
   const [newTaskText, setNewTaskText] = useState('');
   const [inputVisible, setInputVisible] = useState(false);
   const [isDark, setIsDark] = useState(false);
+  const [swipeAnimations, setSwipeAnimations] = useState({});
   const touchData = useRef({ taskId: null, startX: 0 });
 
   const handleAddTask = (e) => {
@@ -33,16 +34,31 @@ export default function App() {
     const deltaX = endX - touchData.current.startX;
     console.log(`Swipe detected for task ${id}: deltaX =`, deltaX);
     if (deltaX > 50) {
-      setTasks((prevTasks) =>
-        prevTasks.map((task) =>
+      setSwipeAnimations((prev) => ({ ...prev, [id]: 'animate-swipe-right' }));
+      console.log('Triggered swipe right animation for task:', id);
+    } else if (deltaX < -50) {
+      setSwipeAnimations((prev) => ({ ...prev, [id]: 'animate-swipe-left' }));
+      console.log('Triggered swipe left animation for task:', id);
+    }
+  };
+
+  const handleAnimationEnd = (id) => {
+    if (swipeAnimations[id] === 'animate-swipe-right') {
+      setTasks((prev) =>
+        prev.map((task) =>
           task.id === id ? { ...task, completed: true } : task
         )
       );
-      console.log('Task marked complete:', id);
-    } else if (deltaX < -50) {
-      setTasks((prevTasks) => prevTasks.filter((task) => task.id !== id));
-      console.log('Task deleted:', id);
+      console.log('Task marked complete after animation:', id);
+    } else if (swipeAnimations[id] === 'animate-swipe-left') {
+      setTasks((prev) => prev.filter((task) => task.id !== id));
+      console.log('Task deleted after animation:', id);
     }
+    setSwipeAnimations((prev) => {
+      const updated = { ...prev };
+      delete updated[id];
+      return updated;
+    });
   };
 
   const toggleDarkMode = () => {
@@ -65,6 +81,7 @@ export default function App() {
         </button>
       </div>
       <div className="flex-grow flex flex-col items-center justify-center">
+        <h1 className="text-center text-2xl font-bold mb-4">SnapTasks</h1>
         <button
           onClick={() => setInputVisible(true)}
           className="cursor-pointer bg-lime-500 hover:bg-lime-600 text-white font-bold py-4 px-8 rounded-full shadow-lg mb-4"
@@ -78,11 +95,13 @@ export default function App() {
             handleAddTask={handleAddTask}
           />
         )}
-        <div className="w-full max-w-md overflow-y-auto" style={{ maxHeight: '50vh' }}>
+        <div className="w-full max-w-md overflow-y-auto text-black" style={{ maxHeight: '50vh' }}>
           <TaskList
             tasks={tasks}
             handleTouchStart={handleTouchStart}
             handleTouchEnd={handleTouchEnd}
+            swipeAnimations={swipeAnimations}
+            handleAnimationEnd={handleAnimationEnd}
           />
         </div>
       </div>
