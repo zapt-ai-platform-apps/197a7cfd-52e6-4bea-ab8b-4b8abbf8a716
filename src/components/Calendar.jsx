@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import CalendarGrid from './CalendarGrid';
+import EventForm from './EventForm';
 
 export default function Calendar({ onBack }) {
   const [events, setEvents] = useState({});
@@ -9,10 +11,15 @@ export default function Calendar({ onBack }) {
   const year = today.getFullYear();
   const month = today.getMonth();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
+
   const daysArray = [];
   for (let day = 1; day <= daysInMonth; day++) {
     daysArray.push(new Date(year, month, day));
   }
+
+  const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const firstDayIndex = new Date(year, month, 1).getDay();
+  const blanks = Array(firstDayIndex).fill(null);
 
   const handleDayClick = (date) => {
     setSelectedDate(date);
@@ -42,41 +49,20 @@ export default function Calendar({ onBack }) {
         Back
       </button>
       <h2 className="text-xl font-bold mb-4">Calendar</h2>
-      <div className="grid grid-cols-7 gap-2">
-        {daysArray.map((date, idx) => (
-          <div
-            key={idx}
-            onClick={() => handleDayClick(date)}
-            className="cursor-pointer border p-2 text-center hover:bg-gray-200"
-          >
-            {date.getDate()}
-            {events[date.toDateString()] && (
-              <div className="text-xs text-blue-500">
-                {events[date.toDateString()]}
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
+      <CalendarGrid 
+        daysOfWeek={daysOfWeek}
+        blanks={blanks}
+        daysArray={daysArray}
+        events={events}
+        onDayClick={handleDayClick}
+      />
       {selectedDate && (
-        <div className="mt-4">
-          <h3 className="font-bold">
-            Add event for {selectedDate.toDateString()}
-          </h3>
-          <input
-            type="text"
-            value={eventText}
-            onChange={(e) => setEventText(e.target.value)}
-            className="w-full p-2 border rounded mb-2 text-black box-border"
-            placeholder="Event details"
-          />
-          <button
-            onClick={handleAddEvent}
-            className="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded"
-          >
-            Add Event
-          </button>
-        </div>
+        <EventForm
+          selectedDate={selectedDate}
+          eventText={eventText}
+          onEventTextChange={setEventText}
+          onAddEvent={handleAddEvent}
+        />
       )}
     </div>
   );

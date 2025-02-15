@@ -11,3 +11,8 @@
   transition: transform 0.3s ease-out;
   transform: translateX(-100%);
 }
+
+.completed {
+  text-decoration: line-through;
+  opacity: 0.6;
+}

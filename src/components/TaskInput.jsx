@@ -7,7 +7,7 @@ export default function TaskInput({ newTaskText, onNewTaskTextChange, handleAddT
         type="text"
         value={newTaskText}
         onChange={onNewTaskTextChange}
-        className="w-full p-2 border rounded mb-2 text-black"
+        className="w-full p-2 border rounded mb-2 text-black box-border"
         placeholder="Enter new task"
       />
       <button
