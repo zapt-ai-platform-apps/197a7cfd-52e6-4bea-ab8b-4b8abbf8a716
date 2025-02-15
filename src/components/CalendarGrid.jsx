@@ -1,34 +1,39 @@
 import React from 'react';
 
 export default function CalendarGrid({ daysOfWeek, blanks, daysArray, events, onDayClick }) {
+  const cells = [...blanks, ...daysArray];
+  const rows = [];
+  for (let i = 0; i < cells.length; i += 7) {
+    rows.push(cells.slice(i, i + 7));
+  }
+
   return (
-    <>
-      <div className="grid grid-cols-7 gap-2 mb-2">
+    <div>
+      <div style={{ display: 'flex' }}>
         {daysOfWeek.map((day, index) => (
-          <div key={index} className="text-center font-bold">
-            {day.slice(0, 3)}
+          <div key={index} style={{ flex: 1, textAlign: 'center', fontWeight: 'bold' }}>
+            {day}
           </div>
         ))}
       </div>
-      <div className="grid grid-cols-7 gap-2">
-        {blanks.map((_, idx) => (
-          <div key={`blank-${idx}`}></div>
-        ))}
-        {daysArray.map((date, idx) => (
-          <div
-            key={idx}
-            onClick={() => onDayClick(date)}
-            className="cursor-pointer border p-2 text-center hover:bg-gray-200"
-          >
-            <div className="font-bold">{date.getDate()}</div>
-            {events[date.toDateString()] && (
-              <div className="text-xs text-blue-500">
-                {events[date.toDateString()]}
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
-    </>
+      {rows.map((row, rowIndex) => (
+        <div key={rowIndex} style={{ display: 'flex' }}>
+          {row.map((cell, cellIndex) => (
+            <div key={cellIndex} style={{ flex: 1, border: '1px solid #ccc', padding: '10px', minHeight: '60px' }}>
+              {cell ? (
+                <button onClick={() => onDayClick(cell)} style={{ width: '100%', background: 'none', border: 'none' }}>
+                  <div>{cell.getDate()}</div>
+                  {events[cell.toDateString()] && (
+                    <div style={{ fontSize: '0.8em', color: 'blue' }}>
+                      {events[cell.toDateString()]}
+                    </div>
+                  )}
+                </button>
+              ) : null}
+            </div>
+          ))}
+        </div>
+      ))}
+    </div>
   );
 }

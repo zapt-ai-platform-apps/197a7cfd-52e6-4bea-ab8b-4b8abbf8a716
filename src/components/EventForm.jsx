@@ -2,20 +2,17 @@ import React from 'react';
 
 export default function EventForm({ selectedDate, eventText, onEventTextChange, onAddEvent }) {
   return (
-    <div className="mt-4">
-      <h3 className="font-bold">
-        Add event for {selectedDate.toDateString()}
-      </h3>
+    <div className="mt-4 p-4 border">
+      <h3 className="text-lg font-semibold mb-2">Add Event for {selectedDate.toDateString()}</h3>
       <input
         type="text"
         value={eventText}
         onChange={(e) => onEventTextChange(e.target.value)}
-        className="w-full p-2 border rounded mb-2 text-black box-border"
-        placeholder="Event details"
+        className="border p-2 mr-2"
       />
       <button
         onClick={onAddEvent}
-        className="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded"
+        className="bg-blue-500 text-white px-4 py-2 rounded"
       >
         Add Event
       </button>
