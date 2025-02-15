@@ -1,6 +1,8 @@
 import React, { useState, useRef } from 'react';
 import TaskList from './components/TaskList';
 import TaskInput from './components/TaskInput';
+import Timer from './components/Timer';
+import Calendar from './components/Calendar';
 
 export default function App() {
   const [tasks, setTasks] = useState([]);
@@ -8,6 +10,8 @@ export default function App() {
   const [inputVisible, setInputVisible] = useState(false);
   const [isDark, setIsDark] = useState(false);
   const [swipeAnimations, setSwipeAnimations] = useState({});
+  const [isTimerActive, setIsTimerActive] = useState(false);
+  const [isCalendarActive, setIsCalendarActive] = useState(false);
   const touchData = useRef({ taskId: null, startX: 0 });
 
   const handleAddTask = (e) => {
@@ -70,24 +74,74 @@ export default function App() {
     ? 'min-h-screen bg-black text-white'
     : 'min-h-screen bg-white text-black';
 
+  const currentDate = new Date().toLocaleDateString();
+
+  if (isTimerActive) {
+    return (
+      <div className={`${containerClass} flex flex-col h-full`}>
+        <Timer onBack={() => setIsTimerActive(false)} />
+        <footer className="p-4 text-center">
+          <a
+            href="https://www.zapt.ai"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="cursor-pointer underline"
+          >
+            Made on ZAPT
+          </a>
+        </footer>
+      </div>
+    );
+  }
+
+  if (isCalendarActive) {
+    return (
+      <div className={`${containerClass} flex flex-col h-full`}>
+        <Calendar onBack={() => setIsCalendarActive(false)} />
+        <footer className="p-4 text-center">
+          <a
+            href="https://www.zapt.ai"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="cursor-pointer underline"
+          >
+            Made on ZAPT
+          </a>
+        </footer>
+      </div>
+    );
+  }
+
   return (
     <div className={`${containerClass} flex flex-col h-full`}>
-      <div className="p-4 flex justify-between">
-        <button
-          onClick={toggleDarkMode}
-          className="cursor-pointer p-2 border rounded"
-        >
+      <header className="p-4 flex justify-between">
+        <button onClick={toggleDarkMode} className="cursor-pointer p-2 border rounded">
           {isDark ? 'light mode' : 'dark mode'}
         </button>
-      </div>
-      <div className="flex-grow flex flex-col items-center justify-center">
+        <div className="text-sm">{currentDate}</div>
+      </header>
+      <main className="flex-grow flex flex-col items-center justify-center">
         <h1 className="text-center text-2xl font-bold mb-4">SnapTasks</h1>
-        <button
-          onClick={() => setInputVisible(true)}
-          className="cursor-pointer bg-lime-500 hover:bg-lime-600 text-white font-bold py-4 px-8 rounded-full shadow-lg mb-4"
-        >
-          Add Task
-        </button>
+        <div className="flex gap-4 mb-4">
+          <button
+            onClick={() => setIsCalendarActive(true)}
+            className="cursor-pointer bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-8 rounded-full shadow-lg"
+          >
+            Calendar
+          </button>
+          <button
+            onClick={() => setInputVisible(true)}
+            className="cursor-pointer bg-lime-500 hover:bg-lime-600 text-white font-bold py-4 px-8 rounded-full shadow-lg"
+          >
+            Add Task
+          </button>
+          <button
+            onClick={() => setIsTimerActive(true)}
+            className="cursor-pointer bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-4 px-8 rounded-full shadow-lg"
+          >
+            Set Timer
+          </button>
+        </div>
         {inputVisible && (
           <TaskInput
             newTaskText={newTaskText}
@@ -95,7 +149,7 @@ export default function App() {
             handleAddTask={handleAddTask}
           />
         )}
-        <div className="w-full max-w-md overflow-y-auto text-black" style={{ maxHeight: '50vh' }}>
+        <div className="w-full max-w-md overflow-y-auto" style={{ maxHeight: '50vh' }}>
           <TaskList
             tasks={tasks}
             handleTouchStart={handleTouchStart}
@@ -104,8 +158,8 @@ export default function App() {
             handleAnimationEnd={handleAnimationEnd}
           />
         </div>
-      </div>
-      <div className="p-4 text-center">
+      </main>
+      <footer className="p-4 text-center">
         <a
           href="https://www.zapt.ai"
           target="_blank"
@@ -114,7 +168,7 @@ export default function App() {
         >
           Made on ZAPT
         </a>
-      </div>
+      </footer>
     </div>
   );
 }
